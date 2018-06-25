@@ -9,6 +9,4 @@
 
 
 
-<iframe width="500" height="300" scrolling="no" frameborder="no" src="https://fusiontables.google.com/embedviz?q=select+col2+from+1JykkONh8mOIl3UlZw7VShsTKhqHEvUqcKPdGohCm&amp;viz=MAP&amp;h=false&amp;lat=41.683073060490734&amp;lng=2.2124104378525544&amp;t=1&amp;z=11&amp;l=col2&amp;y=2&amp;tmplt=2&amp;hml=GEOCODABLE"></iframe>
-</body>
-</html>
+<script src="https://gist.github.com/PolCarCat/02ace455f017d1c5ad2d22e3f326e7f3.js"></script>
