@@ -1,12 +1,98 @@
-
 <!DOCTYPE html>
+
 <html>
 <head>
-<title>Page Title</title>
+    <title>Googlemaps + Google Sheets + Google Forms</title>
+    <style>        
+        html,body{
+            margin:0;
+            padding:0;
+            width:100%;
+            height:100%;
+        }
+    
+        #map_canvas{
+            float:left;
+            width:50%;
+            height:100%;
+        }
+        #panel{
+            float:right;
+            width:50%;
+            height:100%;
+            background-color:#000;
+        }
+        #gform{
+            height: calc(100% - 22px);
+        }
+    </style>
 </head>
-<body>
-<iframe src="https://www.google.com/maps/d/embed?mid=1U0rK0ci45X19MRVAtOZqsj04yFktLsLd" width="640" height="480"></iframe>
 
-
-
-<script src="https://gist.github.com/PolCarCat/02ace455f017d1c5ad2d22e3f326e7f3.js"></script>
+<script src="https://maps.google.com/maps/api/js?sensor=false"></script>
+<script>
+    var DATA_SERVICE_URL="https://script.google.com/macros/s/AKfycbxHrqv5x-2lCtZJ1W49q0rjU6ATnSLZWAtJADqBj1Kil32H80pL/exec?jsonp=callback";
+    
+    var geocoder;
+    var map;
+    
+    function initialize() {
+        //Create a geocoder
+        geocoder = new google.maps.Geocoder();
+        
+        map=new google.maps.Map(document.getElementById('map_canvas'),{
+            center:new google.maps.LatLng(42.456187,-71.0653),
+            zoom:10,
+            maxZoom:20,
+            mapTypeId:google.maps.MapTypeId.ROADMAP
+        });
+        
+        //Inject JavaScript (returned JSON) into the head of the page.
+        var scriptElement=document.createElement('script');
+        scriptElement.src=DATA_SERVICE_URL;
+        document.getElementsByTagName('head')[0].appendChild(scriptElement);
+        
+        
+    }
+    
+    function callback(data) {
+        for (var i=1;i<data.length;i++) {
+            
+            address=data[i][2];
+            
+            //Geocode the JSON returned from callback function.
+            codeAddress();
+        }
+        
+    }
+    
+    function codeAddress(){
+        
+        //Google Async service.
+        geocoder.geocode({'address':address},function(results,status){
+            
+                if (status == google.maps.GeocoderStatus.OK) {
+                    
+                    var marker = new google.maps.Marker({
+                        position:results[0].geometry.location,
+                        map:map
+                    });
+                }else{
+                    alert('Geocode was not successful for the following reason:' + status);
+                }
+            });
+            
+    }
+    
+</script>
+<body onload="initialize()">
+    <div id="map_canvas"></div>
+    <div id="panel">
+        <div id="ctrl">
+            <input type="button" value="Update Map" onclick="document.location.reload(true)">
+        </div>
+        <div id="gform">
+            <iframe id="form" src="https://docs.google.com/forms/d/1u0aw5rz6JFfJf0KvjYn900VMOLWlI8yfiQnKysZFHaA/viewform?embedded=true" width="100%" height="100%" frameborder="0" marginheight="0" marginwidth="0">Loading...</iframe>
+        </div>        
+    </div>
+</body>
+</html>
