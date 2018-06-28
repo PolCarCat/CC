@@ -1,98 +1,75 @@
 <!DOCTYPE html>
-
 <html>
 <head>
-    <title>Googlemaps + Google Sheets + Google Forms</title>
-    <style>        
-        html,body{
-            margin:0;
-            padding:0;
-            width:100%;
-            height:100%;
-        }
-    
-        #map_canvas{
-            float:left;
-            width:50%;
-            height:100%;
-        }
-        #panel{
-            float:right;
-            width:50%;
-            height:100%;
-            background-color:#000;
-        }
-        #gform{
-            height: calc(100% - 22px);
-        }
-    </style>
+<meta name="viewport"/>
+<title>Prova 2 - Google Fusion Tables</title>
+<style type="text/css">
+html, body, #googft-mapCanvas {
+  height: 300px;
+  margin: 0;
+  padding: 0;
+  width: 500px;
+}
+</style>
+
+<script type="text/javascript" src="https://maps.google.com/maps/api/js?v=3"></script>
+
+<script type="text/javascript">
+  function initialize() {
+    var isMobile = (navigator.userAgent.toLowerCase().indexOf('android') > -1) ||
+      (navigator.userAgent.match(/(iPod|iPhone|iPad|BlackBerry|Windows Phone|iemobile)/));
+    if (isMobile) {
+      var viewport = document.querySelector("meta[name=viewport]");
+      viewport.setAttribute('content', 'initial-scale=1.0, user-scalable=no');
+    }
+    var mapDiv = document.getElementById('googft-mapCanvas');
+    mapDiv.style.width = isMobile ? '100%' : '500px';
+    mapDiv.style.height = isMobile ? '100%' : '300px';
+    var map = new google.maps.Map(mapDiv, {
+      center: new google.maps.LatLng(41.65906225544112, 2.445438446766616),
+      zoom: 10,
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    });
+    map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementById('googft-legend-open'));
+    map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementById('googft-legend'));
+
+    layer = new google.maps.FusionTablesLayer({
+      map: map,
+      heatmap: { enabled: false },
+      query: {
+        select: "col6",
+        from: "13HluGPb4VVaCtuqu_q2PBxNSStbXzH1TWgrKvlQU",
+        where: ""
+      },
+      options: {
+        styleId: 2,
+        templateId: 2
+      }
+    });
+
+    if (isMobile) {
+      var legend = document.getElementById('googft-legend');
+      var legendOpenButton = document.getElementById('googft-legend-open');
+      var legendCloseButton = document.getElementById('googft-legend-close');
+      legend.style.display = 'none';
+      legendOpenButton.style.display = 'block';
+      legendCloseButton.style.display = 'block';
+      legendOpenButton.onclick = function() {
+        legend.style.display = 'block';
+        legendOpenButton.style.display = 'none';
+      }
+      legendCloseButton.onclick = function() {
+        legend.style.display = 'none';
+        legendOpenButton.style.display = 'block';
+      }
+    }
+  }
+
+  google.maps.event.addDomListener(window, 'load', initialize);
+</script>
 </head>
 
-<script src="https://maps.google.com/maps/api/js?sensor=false"></script>
-<script>
-    var DATA_SERVICE_URL="https://script.google.com/macros/s/AKfycbxHrqv5x-2lCtZJ1W49q0rjU6ATnSLZWAtJADqBj1Kil32H80pL/exec?jsonp=callback";
-    
-    var geocoder;
-    var map;
-    
-    function initialize() {
-        //Create a geocoder
-        geocoder = new google.maps.Geocoder();
-        
-        map=new google.maps.Map(document.getElementById('map_canvas'),{
-            center:new google.maps.LatLng(42.456187,-71.0653),
-            zoom:10,
-            maxZoom:20,
-            mapTypeId:google.maps.MapTypeId.ROADMAP
-        });
-        
-        //Inject JavaScript (returned JSON) into the head of the page.
-        var scriptElement=document.createElement('script');
-        scriptElement.src=DATA_SERVICE_URL;
-        document.getElementsByTagName('head')[0].appendChild(scriptElement);
-        
-        
-    }
-    
-    function callback(data) {
-        for (var i=1;i<data.length;i++) {
-            
-            address=data[i][2];
-            
-            //Geocode the JSON returned from callback function.
-            codeAddress();
-        }
-        
-    }
-    
-    function codeAddress(){
-        
-        //Google Async service.
-        geocoder.geocode({'address':address},function(results,status){
-            
-                if (status == google.maps.GeocoderStatus.OK) {
-                    
-                    var marker = new google.maps.Marker({
-                        position:results[0].geometry.location,
-                        map:map
-                    });
-                }else{
-                    alert('Geocode was not successful for the following reason:' + status);
-                }
-            });
-            
-    }
-    
-</script>
-<body onload="initialize()">
-    <div id="map_canvas"></div>
-    <div id="panel">
-        <div id="ctrl">
-            <input type="button" value="Update Map" onclick="document.location.reload(true)">
-        </div>
-        <div id="gform">
-            <iframe id="form" src="https://docs.google.com/forms/d/1u0aw5rz6JFfJf0KvjYn900VMOLWlI8yfiQnKysZFHaA/viewform?embedded=true" width="100%" height="100%" frameborder="0" marginheight="0" marginwidth="0">Loading...</iframe>
-        </div>        
-    </div>
+<body>
+  <div id="googft-mapCanvas"></div>
 </body>
 </html>
